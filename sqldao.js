@@ -37,7 +37,7 @@ const dbinfo ={
 
 
 class SQLDAO {
-    constructor(){
+    constructor(table){
         this.client = new Client({
             user: dbinfo.user,
             host: dbinfo.host,
@@ -45,6 +45,8 @@ class SQLDAO {
             password: dbinfo.pass,
             port: dbinfo.port,
         });
+	this.table = table;
+	this.connect();
     }
 
  
@@ -67,30 +69,32 @@ class SQLDAO {
 
 
     // Find stuff
-    async findAll(table) {
+    async findAll() {
         // TODO: check if table is valid
 
 
-        const query = `SELECT * FROM ${table}`;
+        const query = `SELECT * FROM ${this.table}`;
         try {
             const res = await this.client.query(query); 
             console.log("All table data: \n");
             res.rows.forEach(row => console.log(row));
+	    return res.rows;
         } catch (err) {
             console.error("Query error:", err);
         }
     }
 
-    async find(table, id) {
+    async find(id) {
     // TODO: check if table is valid
 
 
-        const query = `SELECT * FROM ${table} WHERE customerid = $2`; 
+        const query = `SELECT * FROM ${this.table} WHERE customerid = $1`; 
         
         try {
             const res = await this.client.query(query, [id]);
             console.log("Query result: \n");
             res.rows.forEach(row => console.log(row));
+	    return res.rows[0];
         } catch (err) {
             console.error("Query error:", err);
         }
@@ -110,14 +114,16 @@ class SQLDAO {
 
 }
 
+export default SQLDAO;
 
-const DAO = new SQLDAO();
+//const DAO = new SQLDAO();
 
-(async () => {
-    await DAO.connect();  // Connect to the database
 
-    await DAO.findAll("customer");  // Query all customers
-    await DAO.find("customer", 0);  // Query customer with ID 1
+//(async () => {
+//    await DAO.connect();  // Connect to the database
+//
+//    await DAO.findAll("customer");  // Query all customers
+//    await DAO.find("customer", 0);  // Query customer with ID 1
 
-    await DAO.disconnect();  // Disconnect from the database
-})();
+//   await DAO.disconnect();  // Disconnect from the database
+//})();
