@@ -1,6 +1,9 @@
 import express from 'express';
+
+import {getCustomers, getCustomer, createCustomer } from '../controllers/customers.js';
+
 const router = express.Router();
-import {getCustomers, getCustomer } from '../controllers/customers.js';
+
 const timeLog = (req,res,next) =>{
 	console.log("Time: ", Date.now())
 	next()
@@ -24,13 +27,6 @@ router.get('/:customerid', getCustomer);
 //res.send("CUSTOMERS")
 //})
 
-router.post('/', (req, res) => {
-
-res.send("Customer Post request")
-
-})
-
-
-
+router.post('/', createCustomer);
 
 export default router;

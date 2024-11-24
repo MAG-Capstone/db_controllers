@@ -1,3 +1,5 @@
+import express from 'express';
+
 import SQLDAO from '../sqldao.js';
 
 const customerDAO = new SQLDAO("customer");
@@ -38,4 +40,22 @@ export const getCustomer = async (req,res, next) =>{
 }
 
 // TODO: POST 
+
+	export const createCustomer = async (req, res, next) => {
+	console.log('Received POST request with data:', req.body);
+  
+	if (!req.body || Object.keys(req.body).length === 0) {
+	  console.log('Request body is empty or undefined');
+	  return res.status(400).send('Request body is missing');
+	}
+  
+	const { name, email } = req.body;
+	try {
+	  const newCustomer = await customerDAO.insert({ name, email });
+	  res.status(201).json(newCustomer);
+	} catch (err) {
+	  console.error('Error inserting customer:', err);
+	  res.status(500).json({ message: 'Error inserting customer', error: err });
+	}
+  };
 

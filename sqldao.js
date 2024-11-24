@@ -101,11 +101,25 @@ class SQLDAO {
     }
 
 
-    insert(table,obj){
+    // insert(table,obj){
 
 
 
 
+    // }
+
+    async insert(obj) {
+        const columns = Object.keys(obj).join(", ");
+        const values = Object.values(obj);
+        const placeholders = values.map((_, index) => `$${index + 1}`).join(", ");
+        
+        const query = `INSERT INTO ${this.table} (${columns}) VALUES (${placeholders}) RETURNING *`;
+        try {
+            const res = await this.client.query(query, values);
+            return res.rows[0];  // Return the inserted row
+        } catch (err) {
+            console.error("Insert error:", err);
+        }
     }
 
 
